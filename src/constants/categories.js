@@ -1,0 +1,17 @@
+export const CATEGORIES = {
+    quotes: 'Hlášky',
+    java: 'Java',
+    php: 'PHP',
+    csharp: 'C#',
+    vb: 'Visual Basic',
+    ruby: 'Ruby',
+    python: 'Python',
+    javascript: 'JavaScript',
+    perl: 'Perl',
+    cpp: 'C/C++',
+    bash: 'Bash',
+    sql: 'SQL',
+    html: 'HTML + CSS',
+    delphi: 'Delphi',
+    other: 'Jiné',
+};
