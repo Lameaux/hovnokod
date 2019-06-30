@@ -1,31 +1,67 @@
-import React from 'react';
-import classNames from 'classnames';
-import { Link } from 'react-router-dom';
+import React, { Component } from 'react';
+import { Link as RouterLink, withRouter } from 'react-router-dom';
 
-import * as ROUTES from '../../constants/routes';
+import Toolbar from "@material-ui/core/Toolbar";
+import Link from '@material-ui/core/Link';
+import withStyles from "@material-ui/styles/withStyles/withStyles";
+
 import { CATEGORIES } from '../../constants/categories';
 
-const CategoryNavigation = ({selected}) => (
-    <ul>
-        <li>
-            <Link to={ROUTES.HOME}>Všechno</Link>
-        </li>
-        {
-            Object.keys(CATEGORIES).map(
-                key => {
-                    const linkClass = classNames(
-                        { 'active': key === selected }
-                    );
+const styles = theme => ({
+    toolbarSecondary: {
+        justifyContent: 'space-between',
+        overflowX: 'auto',
+    },
+    toolbarLink: {
+        padding: theme.spacing(1),
+        flexShrink: 0,
+    },
+    toolbarLinkActive: {
+        ...theme.toolbarLink,
+        fontWeight: 'bolder',
+    }
+});
 
-                    return (
-                        <li key={key}>
-                            <Link className={linkClass} to={key}>{CATEGORIES[key]}</Link>
-                        </li>
-                    )
-                }
-            )
-        }
-    </ul>
-);
+class CategoryNavigation extends Component {
+    render() {
+        const { classes, selected } = this.props;
 
-export default CategoryNavigation;
+        return (
+            <Toolbar component="nav" variant="dense" className={classes.toolbarSecondary}>
+                <Link
+                    color="inherit"
+                    noWrap
+                    variant="body2"
+                    className={
+                        selected === 'all'
+                            ? classes.toolbarLinkActive
+                            : classes.toolbarLink
+                    }
+                    component={RouterLink}
+                    to="/"
+                >
+                    Všechno
+                </Link>
+                {Object.keys(CATEGORIES).map(category => (
+                    <Link
+                        color="inherit"
+                        noWrap
+                        key={category}
+                        variant="body2"
+                        className={
+                            selected === category
+                                ? classes.toolbarLinkActive
+                                : classes.toolbarLink
+                        }
+                        component={RouterLink}
+                        to={'/' + category}
+                    >
+                        {CATEGORIES[category]}
+                    </Link>
+                ))}
+            </Toolbar>
+        );
+    }
+}
+
+export default withRouter(withStyles(styles)(CategoryNavigation));

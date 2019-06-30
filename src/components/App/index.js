@@ -1,42 +1,16 @@
 import React from 'react';
-import {
-    BrowserRouter as Router,
-    Route,
-    Switch,
-} from 'react-router-dom';
 
-import HeaderNavigation from '../HeaderNavigation';
-import HomePage from '../HomePage';
-import CategoryPage from "../CategoryPage";
-import CodePage from "../CodePage";
+import { ThemeProvider } from '@material-ui/styles';
+import { createMuiTheme } from '@material-ui/core/styles';
 
-import * as ROUTES from '../../constants/routes';
-import { CATEGORIES } from '../../constants/categories';
+import Routes from '../../routes';
 
+const theme = createMuiTheme();
 
 const App = () => (
-    <Router>
-        <HeaderNavigation />
-
-        <hr/>
-
-        <Switch>
-            <Route exact path={ROUTES.HOME} component={HomePage} />
-            <Route exact path={ROUTES.ADD} component={HomePage} />
-            <Route exact path={ROUTES.CONDITIONS} component={HomePage} />
-
-            {
-                // Categories
-                Object.keys(CATEGORIES).map(
-                    key => (
-                        <Route key={key} exact path={'/' + key} component={CategoryPage} />
-                    )
-                )
-            }
-
-            <Route exact path="/:id" component={CodePage} />
-        </Switch>
-    </Router>
+    <ThemeProvider theme={theme}>
+        <Routes />
+    </ThemeProvider>
 );
 
 export default App;
