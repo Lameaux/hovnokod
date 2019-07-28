@@ -1,17 +1,21 @@
-export const CATEGORIES = {
+const CATEGORIES = {
     quotes: 'Hlášky',
     java: 'Java',
-    php: 'PHP',
-    csharp: 'C#',
-    vb: 'Visual Basic',
-    ruby: 'Ruby',
-    python: 'Python',
-    javascript: 'JavaScript',
-    perl: 'Perl',
     cpp: 'C/C++',
-    bash: 'Bash',
+    javascript: 'JavaScript',
+    php: 'PHP',
+    python: 'Python',
+    ruby: 'Ruby',
+    html: 'HTML/CSS',
     sql: 'SQL',
-    html: 'HTML + CSS',
+    csharp: 'C#',
+    vb: 'VB',
+    perl: 'Perl',
+    bash: 'Bash',
     delphi: 'Delphi',
     other: 'Jiné',
 };
+
+export const ALL_CATEGORIES = 'Nejnovější';
+
+export default CATEGORIES;

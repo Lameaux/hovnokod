@@ -1,51 +1,32 @@
-import React from 'react';
-
-import CategoryNavigation from '../CategoryNavigation';
-import {makeStyles} from "@material-ui/core";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Container from "@material-ui/core/Container";
-import PageHeader from "../PageHeader";
-import PageFooter from "../PageFooter";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
+import React, { useEffect }  from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
 import Typography from "@material-ui/core/Typography";
+import {pageTitle} from "../../constants/settings";
 
 const useStyles = makeStyles(theme => ({
-    card: {
-        display: 'flex',
-    },
-    cardDetails: {
-        flex: 1,
+    root: {
+        padding: theme.spacing(3, 2),
     },
 }));
+
+const PAGE_TITLE = '404 - Stránka nebyla nalezena';
 
 export default function Error404Page() {
     const classes = useStyles();
 
+    useEffect(() => {
+        document.title = pageTitle(PAGE_TITLE);
+    });
+
     return (
-        <React.Fragment>
-            <CssBaseline />
-
-            <Container maxWidth="lg">
-                <PageHeader />
-                <CategoryNavigation />
-                <main>
-                    <Card className={classes.card}>
-                        <div className={classes.cardDetails}>
-                            <CardContent>
-                                <Typography component="h1" variant="h4" paragraph>
-                                    404 - Stránka nebyla nalezena
-                                </Typography>
-                                <Typography variant="subtitle1" paragraph>
-                                    Zkontrolujte prosím tvar adresy v adresovém řádku Vašeho prohlížeče.
-                                </Typography>
-                            </CardContent>
-                        </div>
-                    </Card>
-                </main>
-            </Container>
-
-            <PageFooter />
-        </React.Fragment>
+        <Paper className={classes.root}>
+            <Typography component="h1" variant="h4" paragraph>
+                {PAGE_TITLE}
+            </Typography>
+            <Typography variant="subtitle1" paragraph>
+                Zkontrolujte prosím tvar adresy v adresovém řádku Vašeho prohlížeče.
+            </Typography>
+        </Paper>
     );
 }

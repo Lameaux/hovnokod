@@ -1,85 +1,35 @@
-import React,  { Component } from 'react';
-import withStyles from '@material-ui/styles/withStyles';
-import { withRouter } from 'react-router-dom';
-import Typography from "@material-ui/core/Typography";
+import React from 'react';
 import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import CodeIcon from '@material-ui/icons/Code';
 import Button from "@material-ui/core/Button";
-import Link from '@material-ui/core/Link';
+import {makeStyles} from "@material-ui/core";
 
-const banner = require('../../images/hovno.png');
+const useStyles = makeStyles(theme => ({
+    root: {
+        padding: theme.spacing(3, 2),
+        margin: theme.spacing(0,0,2,0)
+    },
+    leftIcon: {
+        marginRight: theme.spacing(1),
+    },
+}));
 
-const styles = theme => ({
-    banner: {
-        position: 'relative',
-        backgroundColor: theme.palette.grey[800],
-        color: theme.palette.common.white,
-        marginBottom: theme.spacing(4),
-        backgroundImage: `url(${banner})`,
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
-    },
-    overlay: {
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        right: 0,
-        left: 0,
-        backgroundColor: 'rgba(0,0,0,.3)',
-    },
-    bannerLeft: {
-        position: 'relative',
-        padding: theme.spacing(3),
-        [theme.breakpoints.up('md')]: {
-            padding: theme.spacing(3),
-        },
-    },
-    bannerRight: {
-        position: 'relative',
-        padding: theme.spacing(3),
-        [theme.breakpoints.up('md')]: {
-            padding: theme.spacing(3),
-        },
-    },
-});
+export default ({setOpenDialog}) => {
+    const classes = useStyles();
 
-class Banner extends Component {
-    render() {
-        const { classes } = this.props;
-
-        return (
-            <Paper className={classes.banner}>
-                {/* Increase the priority of the hero background image */}
-                {
-                    <img
-                        style={{ display: 'none' }}
-                        src={banner}
-                        alt="background"
-                    />
-                }
-                <div className={classes.overlay} />
-                <Grid container>
-                    <Grid item md={8}>
-                        <div className={classes.bannerLeft}>
-                            <Typography variant="h5" color="inherit" paragraph>
-                                Narazili jste na zprasený kód?
-                            </Typography>
-                        </div>
-                    </Grid>
-                    <Grid item md={4}>
-                        <div className={classes.bannerRight}>
-                            <Link variant="subtitle1" href="#">
-                                <Button variant="contained" size="large">
-                                    Nahrajte ho sem!
-                                </Button>
-                            </Link>
-                        </div>
-                    </Grid>
-                </Grid>
-            </Paper>
-        )
-    }
+    return (
+        <Paper className={classes.root}>
+            <Typography component="h2" variant="h5">
+                Mistři v programování na Hovnokod.cz
+            </Typography>
+            <Typography variant="subtitle1" paragraph>
+                Narazili jste na zprasený kód? Nahrajte ho sem.
+            </Typography>
+            <Button variant="text" color="secondary" onClick={() => setOpenDialog(true)}>
+                <CodeIcon className={classes.leftIcon} />
+                Vložit zdroják
+            </Button>
+        </Paper>
+    );
 }
-
-export default withRouter(withStyles(styles)(Banner));

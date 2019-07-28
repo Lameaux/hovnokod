@@ -1,115 +1,109 @@
-import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom'
-
-import { CATEGORIES } from '../../constants/categories';
-import CategoryNavigation from '../CategoryNavigation';
-import CodeBlock from '../CodeBlock';
-import withStyles from '@material-ui/styles/withStyles';
-import { withFirebase } from '../Firebase';
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Container from "@material-ui/core/Container";
-import PageHeader from "../PageHeader";
-import PageFooter from "../PageFooter";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
+import React from 'react';
+import Paper from '@material-ui/core/Paper';
 import Typography from "@material-ui/core/Typography";
+import { withStyles } from '@material-ui/styles';
+import {withFirebase} from "../Firebase";
 import Loading from "../Loading";
+import history from "../History";
+import {pageTitle, SITE_URL, DISQUS_SHORTNAME} from '../../constants/settings';
+import CATEGORIES from "../../constants/categories";
+import TimeAgo from "react-timeago";
+import CodeBlock from "../CodeBlock";
+import buildFormatter from "react-timeago/lib/formatters/buildFormatter";
+import czechStrings from "react-timeago/lib/language-strings/cs";
+
+import { DiscussionEmbed } from 'disqus-react';
 
 const styles = theme => ({
-    card: {
-        display: 'flex',
-    },
-    cardDetails: {
-        flex: 1,
+    root: {
+        padding: theme.spacing(3, 2),
+        margin: theme.spacing(0,0,2,0)
     },
 });
 
-class CodePage extends Component {
+class CodePage extends React.Component {
     state = {
         code: null,
-        category: null,
-        unknown: false,
+        loading: true,
     };
 
     _mounted = false;
 
+    loadCode = () => {
+        const code_id = this.props.match.url.slice(1);
+
+        const codesRef = this.props.firebase.codes().doc(code_id);
+        codesRef.get().then(this.updateCode);
+    };
+
+    updateCode = (code) => {
+        if (!this._mounted) return;
+
+        if (!code.exists) {
+            history.push('/error404');
+            return;
+        }
+
+        const codeData = code.data();
+
+        this.props.setCategory(codeData.category);
+
+        this.setState({
+            code: codeData,
+            loading: false,
+        });
+
+        document.title = pageTitle(this.codeTitle(codeData));
+    };
+
+    codeTitle = (code) => {
+        if (code === null) return null;
+        return `${CATEGORIES[code.category]} #${code.id}`;
+    };
+
     componentDidMount() {
         this._mounted = true;
 
-        const { match } = this.props;
-        const id = match.url.slice(1);
-
-        const codesRef = this.props.firebase.codes().doc(id);
-        codesRef.get().then(this.updateCode);
+        this.loadCode();
     }
 
     componentWillUnmount() {
         this._mounted = false;
     }
 
-    updateCode = (code) => {
-        if (!this._mounted) return;
-
-        if (!code.exists) {
-            this.setState({
-                unknown: true
-            });
-
-            return;
+    render() {
+        if (this.state.loading) {
+            return <Loading />;
         }
 
-        const codeData = code.data();
-
-        this.setState({
-            code: codeData,
-            category_id: codeData.category_id,
-        });
-    };
-
-    codeTitle = () => {
-        if (this.state.code === null) return null;
-        return CATEGORIES[this.state.code.category_id] + ' #' + this.state.code.id;
-    };
-
-    render() {
+        const { code } = this.state;
         const { classes } = this.props;
 
-        if (this.state.unknown) return <Redirect to="/error404" />;
+        const codeTitle = this.codeTitle(code);
+
+        const disqusConfig = {
+            url: `${SITE_URL}/${code.id}`,
+            identifier: code.id,
+            title: codeTitle,
+        };
+
+        const formatter = buildFormatter(czechStrings);
 
         return (
-            <React.Fragment>
-                <CssBaseline/>
+            <Paper className={classes.root}>
+                <Typography component="h2" variant="h5">
+                    {codeTitle}
+                </Typography>
+                <Typography variant="caption" color="textSecondary">
+                    <TimeAgo date={code.created.toDate()} formatter={formatter} />
+                </Typography>
+                <Typography variant="subtitle1" paragraph>
+                    {code.description}
+                </Typography>
+                <CodeBlock language={code.category} value={code.code} />
 
-                <Container maxWidth="lg">
-                    <PageHeader/>
-                    <CategoryNavigation selected={this.state.category_id} />
-                    <main>
-                        {
-                            this.state.code === null
-                                ? <Loading />
-                                : <Card className={classes.card}>
-                                    <div className={classes.cardDetails}>
-                                        <CardContent>
-                                            <Typography component="h1" variant="h4" paragraph>
-                                                {this.codeTitle()}
-                                            </Typography>
-                                            <Typography variant="subtitle1" paragraph>
-                                                {this.state.code.description}
-                                            </Typography>
-                                            <CodeBlock language={this.state.code.category_id}
-                                                       value={this.state.code.code}/>
-                                            <Typography variant="subtitle1" color="textSecondary">
-                                                {this.state.code.created}
-                                            </Typography>
-                                        </CardContent>
-                                    </div>
-                                </Card>
-                        }
-                    </main>
-                </Container>
-
-                <PageFooter/>
-            </React.Fragment>
+                <DiscussionEmbed shortname={DISQUS_SHORTNAME} config={disqusConfig} />
+            </Paper>
         );
     }
 }
